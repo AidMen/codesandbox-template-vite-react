@@ -1,0 +1,14 @@
+$z-offset: 1500;
+$z-layers: (".map", ".nav");
+
+@function z($selector: &, $list: $z-layers, $offset: $z-offset) {
+  $index: index($list, #{$selector});
+
+  @if $index == null {
+    @warn '#{$selector} not found in given list';
+
+    @return ($offset);
+  }
+
+  @return ($offset + $index);
+}

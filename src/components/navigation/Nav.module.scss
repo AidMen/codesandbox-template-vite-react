@@ -1,0 +1,16 @@
+@import "../../assets/common-styles/colors";
+@import "../../assets/common-styles/z-index";
+
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: z();
+
+  &__list {
+    // list specific styles
+
+    &-item {
+      // list-item specific styles
+    }
+  }
+}
