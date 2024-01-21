@@ -4,6 +4,7 @@ import styleClasses from "./Map.module.scss";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import markerIcon from "../../assets/images/marker-green-masjid.png";
+import { getAllDzemat } from "../database/DzematDatabase";
 
 function getIcon(_iconSize) {
   return L.icon({
@@ -12,27 +13,24 @@ function getIcon(_iconSize) {
   });
 }
 
-function Map() {
-  console.log("Map.render()");
-  return (
-    <div className={`${styleClasses["map"]}`}>
-      <MapContainer
-        className={`${styleClasses["map__leaflet-container"]}`}
-        center={[51.5453593, 7.4842446]}
-        zoom={13}
-        scrollWheelZoom={false}
-      >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        <Marker position={[51.5453593, 7.4842446]} icon={getIcon(40)}>
+function allDzematMarkers() {
+  const arr = [];
+  const allDzemat = getAllDzemat();
+  allDzemat.then(function (result) {
+    result.forEach((dzematSnapshot) => {
+      const dzemat = dzematSnapshot.data();
+      console.log("retrieved dzemat: ", dzemat);
+      arr.push(
+        <Marker
+          position={[dzemat.geo._lat, dzemat.geo._long]}
+          icon={getIcon(40)}
+        >
           <Popup>
             <div className={`${styleClasses["map__marker-popup"]}`}>
               <div className={`${styleClasses["map__marker-popup-heading"]}`}>
                 <div className="map__marker-popup-row">
                   <span className={`${styleClasses["map__masjid-name"]}`}>
-                    Dzemat Dortmund
+                    Test
                   </span>
                 </div>
                 <div className="map__marker-popup-row">
@@ -93,10 +91,31 @@ function Map() {
               </div>
             </div>
           </Popup>
-        </Marker>
+        </Marker>,
+      );
+    });
+  });
+  return arr;
+}
+
+export default function Map() {
+  console.log("Map.render()");
+  const allDzemat = allDzematMarkers();
+  return (
+    <div className={`${styleClasses["map"]}`}>
+      <MapContainer
+        className={`${styleClasses["map__leaflet-container"]}`}
+        center={[51.5453593, 7.4842446]}
+        zoom={13}
+        scrollWheelZoom={false}
+      >
+        <TileLayer
+          noWrap={true}
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        {allDzemat}
       </MapContainer>
     </div>
   );
 }
-
-export default Map;
